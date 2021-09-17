@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+
+  ros:
+    image: ros:random
+    volumes:
+      - /home/ivan/gideon_test/logs/ros_main/:/root/.ros/
+    command: roscore
+
+  ros-producer:
+    image: ros:random
+    volumes:
+      - /home/ivan/gideon_test/logs/prod_log/:/root/.ros/
+      - /home/ivan/gideon_test/scripts/:/tmp/scripts
+    command: python3.8  /tmp/scripts/publisher.py
+    depends_on:
+      - ros
+
+  ros-consumer:
+    image: ros:random
+    volumes:
+      - /home/ivan/gideon_test/logs/list_log/:/root/.ros/
+      - /home/ivan/gideon_test/scripts/:/tmp/scripts
+    command: python3.8 /tmp/scripts/listener.py
+    depends_on:
+      - ros
