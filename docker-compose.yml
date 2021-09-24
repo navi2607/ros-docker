@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+
+  ros-master:
+    build: .
+    volumes:
+      - ./logs/ros-master/:/root/.ros/
+    command: roscore
