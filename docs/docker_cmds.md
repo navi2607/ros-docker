@@ -1,5 +1,7 @@
 ### Build a image from the provided Dockerfile
-**docker build -t ros:ubuntu_1804 .**
+``` 
+docker build -t ros:ubuntu_1804 .
+```
 
 * build --> the docker command used tu build an image
 * -t is an optional argument, used to name the image ros:ubuntu_1804
@@ -7,7 +9,9 @@
 
 
 ### Temporary run a container
-**docker run -it --rm ros:ubuntu_1804 bash**
+``` 
+docker run -it --rm ros:ubuntu_1804 bash
+```
 
 * run --> docker command to run a container
 * -it run in interactive mode
