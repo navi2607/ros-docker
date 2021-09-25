@@ -62,7 +62,7 @@ def run_publisher(publisher_cfg: Dict[str, Any]) -> None:
     shutdown_callback = rospy.is_shutdown
 
     # Get a data source
-    data_source = get_data_source(cfg['data_source'])
+    data_source, *other = get_data_source(cfg['data_source'])
 
     # Wrap the ROS publisher with a wrapper class
     publisher = Publisher(data_source, ros_publisher, rate, shutdown_callback)
@@ -73,3 +73,10 @@ def run_publisher(publisher_cfg: Dict[str, Any]) -> None:
             print(f"Publisher msg ==> {response}")
     except rospy.ROSInterruptException:
         pass
+    finally:
+        # This is specific if the source is a background process
+        try:
+            other[0].stop()
+            data_source.close()
+        except Exception:
+            pass
