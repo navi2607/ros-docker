@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.8
+
 import argparse
 import json
 
@@ -7,8 +9,11 @@ args, _ = arg_parser.parse_known_args()
 
 if args.mode == "publisher":
     import publisher
+    from utils import com
     run_func = publisher.run_publisher
     cfg_file = "/tmp/scripts/publisher/publisher_cfg.json"
+
+
 elif args.mode == "listener":
     import listener
     run_func = listener.run_listener

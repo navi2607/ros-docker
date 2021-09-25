@@ -1,5 +1,5 @@
 {
-        "data_sink": "console",
+        "data_sink": "db",
         "topic_name": "chatter",
         "msg_type": "std_msgs.msg.String"
 }

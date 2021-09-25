@@ -17,10 +17,12 @@ services:
       - ./logs/ros-publisher/:/root/.ros/
       - ./output/:/tmp/output/
       - ./scripts/:/tmp/scripts/
-    command: sh -c "python3.8  /tmp/scripts/run.py --mode publisher >> /tmp/output/publisher-output.txt"
+    command: sh -c "python3.8 /tmp/scripts/run.py --mode publisher >> /tmp/output/publisher-output.txt"
     environment:
       - ROS_HOSTNAME=ros-publisher
       - ROS_MASTER_URI=http://ros-master:11311
+    ports:
+      - "8000:5432"
     depends_on:
       - ros-master
 
@@ -30,6 +32,7 @@ services:
       - ./logs/ros-listener/:/root/.ros/
       - ./output/:/tmp/output/
       - ./scripts/:/tmp/scripts/
+      - ./db/:/tmp/db/
     command: sh -c "python3.8 /tmp/scripts/run.py --mode listener >> /tmp/output/listener-output.txt"
     environment:
       - ROS_HOSTNAME=ros-listener
