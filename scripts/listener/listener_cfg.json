@@ -1,0 +1,5 @@
+{
+        "data_sink": "console",
+        "topic_name": "chatter",
+        "msg_type": "std_msgs.msg.String"
+}

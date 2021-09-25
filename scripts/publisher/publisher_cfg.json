@@ -1,0 +1,7 @@
+{
+        "data_source": { "type": "YAML", "file": "/tmp/scripts/msg.yml"},
+        "topic_name": "chatter",
+        "msg_type": "std_msgs.msg.String",
+        "queue_size": 10,
+        "rate": 10
+}

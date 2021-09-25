@@ -6,4 +6,33 @@ services:
     build: .
     volumes:
       - ./logs/ros-master/:/root/.ros/
-    command: roscore
+      - ./output/:/tmp/output
+    ports:
+      - "11311:11311"
+    command: sh -c "roscore >> /tmp/output/master-output.txt"
+
+  ros-publisher:
+    build: .
+    volumes:
+      - ./logs/ros-publisher/:/root/.ros/
+      - ./output/:/tmp/output/
+      - ./scripts/:/tmp/scripts/
+    command: sh -c "python3.8  /tmp/scripts/run.py --mode publisher >> /tmp/output/publisher-output.txt"
+    environment:
+      - ROS_HOSTNAME=ros-publisher
+      - ROS_MASTER_URI=http://ros-master:11311
+    depends_on:
+      - ros-master
+
+  ros-listener:
+    build: .
+    volumes:
+      - ./logs/ros-listener/:/root/.ros/
+      - ./output/:/tmp/output/
+      - ./scripts/:/tmp/scripts/
+    command: sh -c "python3.8 /tmp/scripts/run.py --mode listener >> /tmp/output/listener-output.txt"
+    environment:
+      - ROS_HOSTNAME=ros-listener
+      - ROS_MASTER_URI=http://ros-master:11311
+    depends_on:
+      - ros-master
