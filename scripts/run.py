@@ -9,7 +9,6 @@ args, _ = arg_parser.parse_known_args()
 
 if args.mode == "publisher":
     import publisher
-    from utils import com
     run_func = publisher.run_publisher
     cfg_file = "/tmp/scripts/publisher/publisher_cfg.json"
 

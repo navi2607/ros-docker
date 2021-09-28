@@ -14,18 +14,12 @@ class Listener:
         Initializes the listener wrapper object.
 
         :param listener_imp: Any object that has a listen() method that accepts incoming messages
-
-        :return None
         """
         self.listener_imp = listener_imp
 
     def listen(self) -> None:
-        """
-        Initializes the listener wrapper object.
-
-        :return None
-        """
-        self.listener_imp.liste()
+        """ Start to listen on incomming messages. """
+        self.listener_imp.listen()
 
 
 def run_listener(listener_cfg: Dict[str, Any]) -> None:
@@ -34,7 +28,6 @@ def run_listener(listener_cfg: Dict[str, Any]) -> None:
     listen for incoming using the ROS Subscriber.
 
     :param listener_cfg:
-    :return: None
     """
     # Create the ROS listener
     cfg = map_config_to_ros_objects(listener_cfg)

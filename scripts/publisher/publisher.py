@@ -9,21 +9,24 @@ from utils import map_config_to_ros_objects, get_data_source
 class Publisher:
     """ Wrapper class that when pinged publishes a message """
 
-    def __init__(self, data_src: Any, publisher_imp: Any, msg_rate: Any, stop_callback: Callable) -> None:
+    def __init__(self, publisher_imp: Any, msg_rate: Any, stop_callback: Callable) -> None:
         """
         Initializes the publisher wrapper object.
 
-        :param data_src: Any object that follows the interface of the Source class in sources.py
         :param publisher_imp: Any object that has a publish() method that publishes messages
         :param msg_rate: Any object that has a sleep() method
         :param stop_callback: Callable object that breaks the __call__ generator  function
 
         :return None
         """
-        self.data_src = data_src
         self.publisher_imp = publisher_imp
         self.msg_rate = msg_rate
         self.stop_callback = stop_callback
+
+        self.data_src = None
+        self.default_data_src = None
+
+        self.msg = None
 
     def __call__(self) -> str:
         """
@@ -32,13 +35,28 @@ class Publisher:
 
         :return Produced message
         """
+        self.msg = self.default_data_src.get_data()
+        self._update_msg()
+
         while not self.stop_callback():
             self.msg_rate.sleep()
-            msg_data = self.data_src.get_data()
-            msg_data = str(msg_data)
+            self._update_msg()
+
+            msg_data = str(self.msg)
             self.publisher_imp.publish(msg_data)
 
             yield msg_data
+
+    def _update_msg(self) -> None:
+        """
+        Helper function that updates the current msg value
+
+        :return: None
+        """
+        temp_msg = self.data_src.get_data()
+
+        if temp_msg is not None and self.msg != temp_msg:
+            self.msg = temp_msg
 
 
 def run_publisher(publisher_cfg: Dict[str, Any]) -> None:
@@ -62,10 +80,14 @@ def run_publisher(publisher_cfg: Dict[str, Any]) -> None:
     shutdown_callback = rospy.is_shutdown
 
     # Get a data source
+    default_source = get_data_source(cfg['default_source'])
     data_source, *other = get_data_source(cfg['data_source'])
 
     # Wrap the ROS publisher with a wrapper class
-    publisher = Publisher(data_source, ros_publisher, rate, shutdown_callback)
+    publisher = Publisher(ros_publisher, rate, shutdown_callback)
+
+    publisher.data_src = data_source
+    publisher.default_data_src = default_source
 
     # Send data until interruption
     try:
