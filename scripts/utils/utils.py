@@ -1,5 +1,8 @@
 from std_msgs.msg import String
-from typing import Dict, Any
+from typing import Dict, Any, TypeVar
+
+Server = TypeVar('Server')
+Handler = TypeVar('Handler')
 
 
 ros_object_mapping = {
@@ -27,40 +30,49 @@ def map_config_to_ros_objects(cfg: Dict[str, str]) -> Dict[str, Any]:
 
 class ServerConfig:
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """ Initialize server config object"""
         self._server_type = None
         self._handler_type = None
         self._address = None
         self._port = None
 
     @property
-    def server_type(self):
+    def server_type(self) -> Server:
+        """ Server type getter """
         return self._server_type
 
     @server_type.setter
-    def server_type(self, server_type):
+    def server_type(self, server_type: Server) -> None:
+        """ Server type setter """
         self._server_type = server_type
 
     @property
-    def handler_type(self):
+    def handler_type(self) -> Handler:
+        """ Handler type getter """
         return self._handler_type
 
     @handler_type.setter
-    def handler_type(self, handler_type):
+    def handler_type(self, handler_type: Handler) -> None:
+        """ Handler type setter """
         self._handler_type = handler_type
 
     @property
-    def address(self):
+    def address(self) -> str:
+        """ Address type getter """
         return self._address
 
     @address.setter
-    def address(self, address):
+    def address(self, address: str):
+        """ Address type setter """
         self._address = address
 
     @property
-    def port(self):
+    def port(self) -> int:
+        """ Port type getter """
         return self._port
 
     @port.setter
-    def port(self, port):
+    def port(self, port: int) -> None:
+        """ Port type setter """
         self._port = port

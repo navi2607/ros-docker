@@ -52,13 +52,14 @@ class Console:
 
 class SqlLite:
 
-    def __init__(self, db) -> None:
+    def __init__(self, db: str) -> None:
         self.db = db
 
     def __call__(self, data: Data) -> None:
+        print(data, file=sys.stdout)  # Log data first
         self.insert(data)
 
-    def insert(self, data):
+    def insert(self, data: Data):
         table_dml = """ INSERT INTO message (msg) VALUES (?) """
 
         conn = sqlite3.connect(self.db)

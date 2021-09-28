@@ -1,4 +1,5 @@
 {
+        "default_source": {"type": "YAML", "file": "/tmp/scripts/msg.yml"},
         "data_source": "Server",
         "topic_name": "chatter",
         "msg_type": "std_msgs.msg.String",

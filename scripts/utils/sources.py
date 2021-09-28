@@ -1,5 +1,6 @@
 import abc
 import http.server
+
 import yaml
 from typing import Dict, Any, TypeVar, Generic
 
@@ -7,6 +8,8 @@ import utils.com as com
 
 DataSource = TypeVar('DataSource')
 Data = TypeVar('Data', dict, Any)
+ServerConfig = TypeVar('ServerConfig', dict, Any)
+Socket = TypeVar('Socket')
 
 
 def get_data_source(source_cfg: Dict[str, Any]) -> Generic[DataSource]:
@@ -115,17 +118,23 @@ class YamlSource(FileSource):
 class ServerSource(Source):
 
     @abc.abstractmethod
-    def get_data(self):
+    def get_data(self) -> Data:
         pass
 
     @abc.abstractmethod
-    def spin_up(self):
+    def spin_up(self) -> None:
         pass
 
 
 class SimpleServer(ServerSource):
 
-    def __init__(self, config, conn):
+    def __init__(self, config: ServerConfig, conn: Socket) -> None:
+        """
+        Initializes the server
+
+        :param config: Server configuration
+        :param conn: Socket that accepts a client connection
+        """
         self.server_type = config.server_type
         self.handler_type = config.handler_type
         self.address = (config.address, config.port)
@@ -133,7 +142,9 @@ class SimpleServer(ServerSource):
 
         self.server_instance = None
 
-    def spin_up(self):
+    def spin_up(self) -> None:
+        """ Method that starts the server. After that the server can receive requests. """
+
         if self.server_instance is None:
             self.server_instance = self.server_type(self.address, self.handler_type)
 
@@ -148,20 +159,22 @@ class PutHandler(http.server.SimpleHTTPRequestHandler):
 
     put_socket = None
 
-    def _set_response(self):
+    def _set_response(self) -> None:
+        """ Returns a response to a request """
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
-    def do_POST(self):
+    def do_POST(self) -> None:
+        """ Method that parses a POST request and pushes the request to a socket gateway """
+
         content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
         post_data = self.rfile.read(content_length)  # <--- Gets the data itself
         self._set_response()
-        # self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
         self.put_socket.send_to_client(post_data)
 
     def handle(self) -> None:
-        """Handle multiple requests if necessary."""
+        """ Helper method that handles requests. """
         self.close_connection = True
 
         self.handle_one_request()
